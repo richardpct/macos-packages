@@ -18,4 +18,4 @@ environment user.
 - tree
 
 # Installation
-Launch Install_all.sh script and it will install packages listed above
+Launch Install_all.sh or Install_all_go.sh scripts and it will install packages listed above
