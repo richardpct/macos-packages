@@ -1,4 +1,4 @@
-.PHONY: install
+.PHONY: all
 
 .DEFAULT_GOAL := all
 # DEST_DIR is the directory where the packages will be installed
