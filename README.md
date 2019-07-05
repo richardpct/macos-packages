@@ -1,12 +1,15 @@
 # macos-packages
 My macOS packages
 
-# Requirement
-macOS
+# Requirements
+- macOS
+- Go compiler
 
 # Purpose
-I am not using Homebrew because I want to install all my packages in my
-environment user.
+I do not use Homebrew because I want to install all my packages in my
+environment user.  
+I wrote a Makefile that retrieves my programs written in Go, then build and
+install the packages.
 
 # Packages list
 - libtool
@@ -17,5 +20,12 @@ environment user.
 - tmux
 - tree
 
-# Installation
-Launch Install_all.sh or Install_all_go.sh scripts and it will install packages listed above
+# Usage
+With your normal user account (no root):
+
+    $ cd macos-packages
+    $ make DEST_DIR=~/opt
+
+Using the optional DEST_DIR parameter will instruct Make to install the packages
+in this directory, thus the previous command will install packages in ~/opt
+directory.
