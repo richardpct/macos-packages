@@ -4,8 +4,13 @@
 # DEST_DIR is the directory where the packages will be installed
 DEST_DIR      ?= $(HOME)/test
 GOPATH        ?= $(HOME)/go
-VPATH         := $(DEST_DIR)/bin 
+VPATH         := $(DEST_DIR)/bin
+GO_EXISTS     := $(shell which go)
 vpath %.a $(DEST_DIR)/lib
+
+ifndef GO_EXISTS
+  $(error go compiler is not found)
+endif
 
 # $(call install-package,package_name)
 define install-package
@@ -17,7 +22,7 @@ all: glibtool openssl autoconf automake libevent.a tmux tree
 
 glibtool:
 ifeq "$(wildcard $(DEST_DIR))" ""
-	mkdir $(DEST_DIR)
+	@mkdir $(DEST_DIR)
 endif
 	$(call install-package,libtool)
 
