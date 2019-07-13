@@ -18,7 +18,7 @@ define install-package
   $(GOPATH)/bin/macos-$1 -destdir=$(DEST_DIR)
 endef
 
-all: glibtool openssl autoconf automake libevent.a tmux tree
+all: glibtool openssl autoconf automake libevent.a tmux tree make
 
 glibtool:
 ifeq "$(wildcard $(DEST_DIR))" ""
@@ -42,4 +42,7 @@ tmux: libevent.a
 	$(call install-package,$@)
 
 tree:
+	$(call install-package,$@)
+
+make:
 	$(call install-package,$@)
