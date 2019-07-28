@@ -1,48 +1,65 @@
-.PHONY: all
-
 .DEFAULT_GOAL := all
-# DEST_DIR is the directory where the packages will be installed
 DEST_DIR      ?= $(HOME)/test
-GOPATH        ?= $(HOME)/go
-VPATH         := $(DEST_DIR)/bin
-GO_EXISTS     := $(shell which go)
+GO            ?= $(HOME)/opt/go/bin/go
+GO_BIN        ?= $(HOME)/go/bin
+REPO          ?= github.com/richardpct
+SRC           := $(HOME)/go/src/$(REPO)
+PACKAGES      := libtool \
+                 openssl \
+                 autoconf \
+                 automake \
+                 libevent \
+                 tmux \
+                 tree \
+                 make
+VPATH         := $(DEST_DIR)/bin $(foreach pkg,$(PACKAGES),$(SRC)/macos-$(pkg))
 vpath %.a $(DEST_DIR)/lib
-
-ifndef GO_EXISTS
-  $(error go compiler is not found)
-endif
 
 # $(call install-package,package_name)
 define install-package
-  go get -u github.com/richardpct/macos-$1
-  $(GOPATH)/bin/macos-$1 -destdir=$(DEST_DIR)
+  $(GO) get -u $(REPO)/macos-$1
+  $(GO_BIN)/macos-$1 -destdir=$(DEST_DIR)
 endef
 
-all: glibtool openssl autoconf automake libevent.a tmux tree make
+.PHONY: all
+all: $(PACKAGES)
 
-glibtool:
-ifeq "$(wildcard $(DEST_DIR))" ""
-	@mkdir $(DEST_DIR)
-endif
+.PHONY: update_repo
+update_repo:
+	for pkg in $(PACKAGES); do \
+	  $(GO) get -d $(REPO)/macos-$$pkg; \
+	done
+
+%: update_repo ;
+
+%.go: ;
+
+.PHONY: libtool
+libtool: glibtool
+
+glibtool: libtool.go
 	$(call install-package,libtool)
 
-openssl:
+openssl: openssl.go
 	$(call install-package,$@)
 
-autoconf:
+autoconf: autoconf.go
 	$(call install-package,$@)
 
-automake: autoconf
+automake: autoconf automake.go
 	$(call install-package,$@)
 
-libevent.a: automake glibtool openssl
+.PHONY: libevent
+libevent: libevent.a
+
+libevent.a: automake glibtool openssl libevent.go
 	$(call install-package,libevent)
 
-tmux: libevent.a
+tmux: libevent.a tmux.go
 	$(call install-package,$@)
 
-tree:
+tree: tree.go
 	$(call install-package,$@)
 
-make:
+make: make.go
 	$(call install-package,$@)
