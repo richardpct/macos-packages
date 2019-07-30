@@ -12,7 +12,8 @@ PACKAGES      := libtool \
                  libevent \
                  tmux \
                  tree \
-                 make
+                 make \
+                 htop
 VPATH         := $(DEST_DIR)/bin $(foreach pkg,$(PACKAGES),$(SRC)/macos-$(pkg))
 vpath %.a $(DEST_DIR)/lib
 
@@ -61,6 +62,9 @@ tree: tree.go ## Build tree
 	$(call install-package,$@)
 
 make: make.go ## Build make
+	$(call install-package,$@)
+
+htop: htop.go ## Build htop
 	$(call install-package,$@)
 
 .PHONY: help

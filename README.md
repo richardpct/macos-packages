@@ -20,6 +20,7 @@ install the packages.
 - tmux
 - tree
 - make
+- htop
 
 # Usage
 All the following commands should be performed with your normal user account
