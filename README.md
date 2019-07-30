@@ -19,13 +19,25 @@ install the packages.
 - libevent
 - tmux
 - tree
+- make
 
 # Usage
-With your normal user account (no root):
+All the following commands should be performed with your normal user account
+(no root).
+
+To display all commands available:
+
+    $ make
+
+or
+
+    $ make help
+
+To install all packages:
 
     $ cd macos-packages
-    $ make DEST_DIR=~/opt
+    $ make DEST_DIR=~/opt all
 
 Using the optional DEST_DIR parameter will instruct Make to install the packages
-in this directory, thus the previous command will install packages in ~/opt
+in this directory, thus the previous command will install the packages in ~/opt
 directory.
