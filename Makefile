@@ -4,7 +4,7 @@ DEST_DIR      ?= $(HOME)/test
 GO            ?= $(HOME)/opt/go/bin/go
 GO_BIN        ?= $(HOME)/go/bin
 REPO          ?= github.com/richardpct
-SRC           := $(HOME)/go/src/$(REPO)
+GO_SRC        := $(HOME)/go/src/$(REPO)
 PACKAGES      := libtool \
                  openssl \
                  autoconf \
@@ -14,8 +14,14 @@ PACKAGES      := libtool \
                  tree \
                  make \
                  htop
-VPATH         := $(DEST_DIR)/bin $(foreach pkg,$(PACKAGES),$(SRC)/macos-$(pkg))
+VPATH         := $(DEST_DIR)/bin $(foreach pkg,$(PACKAGES),$(GO_SRC)/macos-$(pkg))
 vpath %.a $(DEST_DIR)/lib
+
+# If default GO does not exist then looks for in PATH variable
+ifeq "$(wildcard $(GO))" ""
+  GO_FOUND := $(shell which go)
+  GO = $(if $(GO_FOUND),$(GO_FOUND),$(error go is not found))
+endif
 
 # $(call install-package,package_name)
 define install-package
