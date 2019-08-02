@@ -23,6 +23,14 @@ define install-package
   $(GO_BIN)/macos-$1 -destdir=$(DEST_DIR)
 endef
 
+.PHONY: help
+help: ## Show help
+	@echo "Usage: make [DEST_DIR=/tmp] TARGET\n"
+	@echo "Targets:"
+	@$(AWK) -F ":.* ##" '/.*:.*##/{ printf "%-13s%s\n", $$1, $$2 }' \
+	$(MAKEFILE_LIST) \
+	| grep -v AWK
+
 .PHONY: all
 all: $(PACKAGES) ## Build all packages
 
@@ -66,10 +74,3 @@ make: make.go ## Build make
 
 htop: htop.go ## Build htop
 	$(call install-package,$@)
-
-.PHONY: help
-help:
-	@printf "%-15s %s\n\n" "Target" "Description"
-	@$(AWK) -F ":.* ##" '/.*:.*##/{ printf "%-15s%s\n", $$1, $$2 }' \
-	$(MAKEFILE_LIST) \
-	| grep -v AWK
