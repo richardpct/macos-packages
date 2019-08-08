@@ -5,15 +5,15 @@ GO            ?= $(HOME)/opt/go/bin/go
 GO_BIN        ?= $(HOME)/go/bin
 REPO          ?= github.com/richardpct
 GO_SRC        := $(HOME)/go/src/$(REPO)
-PACKAGES      := libtool \
-                 openssl \
-                 autoconf \
-                 automake \
-                 libevent \
-                 tmux \
-                 tree \
+PACKAGES      := tree \
                  make \
-                 htop
+                 htop \
+                 tmux \
+                 libevent \
+                 libtool \
+                 openssl \
+                 automake \
+                 autoconf
 VPATH         := $(DEST_DIR)/bin $(foreach pkg,$(PACKAGES),$(GO_SRC)/macos-$(pkg))
 vpath %.a $(DEST_DIR)/lib
 
@@ -48,6 +48,24 @@ update_repo: ## Update all repositories
 
 $(foreach pkg,$(PACKAGES),$(pkg).go): update_repo
 
+tree: tree.go ## Build tree
+	$(call install-package,$@)
+
+make: make.go ## Build make
+	$(call install-package,$@)
+
+htop: htop.go ## Build htop
+	$(call install-package,$@)
+
+tmux: tmux.go libevent.a ## Build tmux
+	$(call install-package,$@)
+
+.PHONY: libevent
+libevent: libevent.a ## Build libevent
+
+libevent.a: libevent.go glibtool openssl automake
+	$(call install-package,libevent)
+
 .PHONY: libtool
 libtool: glibtool ## Build libtool
 
@@ -57,26 +75,8 @@ glibtool: libtool.go
 openssl: openssl.go ## Build openssl
 	$(call install-package,$@)
 
+automake: automake.go autoconf ## Build automake
+	$(call install-package,$@)
+
 autoconf: autoconf.go ## Build autoconf
-	$(call install-package,$@)
-
-automake: autoconf automake.go ## Build automake
-	$(call install-package,$@)
-
-.PHONY: libevent
-libevent: libevent.a ## Build libevent
-
-libevent.a: automake glibtool openssl libevent.go
-	$(call install-package,libevent)
-
-tmux: libevent.a tmux.go ## Build tmux
-	$(call install-package,$@)
-
-tree: tree.go ## Build tree
-	$(call install-package,$@)
-
-make: make.go ## Build make
-	$(call install-package,$@)
-
-htop: htop.go ## Build htop
 	$(call install-package,$@)
