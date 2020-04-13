@@ -1,5 +1,5 @@
 .DEFAULT_GOAL  := help
-DEST_DIR       ?= $(HOME)/test
+DEST_DIR       ?= /tmp/test
 GO             ?= $(HOME)/opt/go/bin/go
 GO_BIN         ?= $(HOME)/go/bin
 REPO           ?= github.com/richardpct
