@@ -1,20 +1,23 @@
-.DEFAULT_GOAL := help
-AWK           := /usr/bin/awk
-DEST_DIR      ?= $(HOME)/test
-GO            ?= $(HOME)/opt/go/bin/go
-GO_BIN        ?= $(HOME)/go/bin
-REPO          ?= github.com/richardpct
-GO_SRC        := $(HOME)/go/src/$(REPO)
-PACKAGES      := tree \
-                 make \
-                 htop \
-                 tmux \
-                 libevent \
-                 libtool \
-                 openssl \
-                 automake \
-                 autoconf
-VPATH         := $(DEST_DIR)/bin $(foreach pkg,$(PACKAGES),$(GO_SRC)/macos-$(pkg))
+.DEFAULT_GOAL  := help
+DEST_DIR       ?= $(HOME)/test
+GO             ?= $(HOME)/opt/go/bin/go
+GO_BIN         ?= $(HOME)/go/bin
+REPO           ?= github.com/richardpct
+GO_SRC         := $(HOME)/go/src/$(REPO)
+CLAMAV_DB_DIR  := $(DEST_DIR)/var/lib/clamav
+FRESHCLAM_CONF := $(DEST_DIR)/etc/clamav/freshclam.conf
+PACKAGES       := tree \
+                  make \
+                  htop \
+                  tmux \
+                  clamav \
+                  libevent \
+                  libtool \
+                  openssl \
+                  automake \
+                  autoconf \
+                  pcre2
+VPATH          := $(DEST_DIR)/bin $(foreach pkg,$(PACKAGES),$(GO_SRC)/macos-$(pkg))
 vpath %.a $(DEST_DIR)/lib
 
 # If default GO does not exist then looks for in PATH variable
@@ -33,9 +36,9 @@ endef
 help: ## Show help
 	@echo "Usage: make [DEST_DIR=/tmp] TARGET\n"
 	@echo "Targets:"
-	@$(AWK) -F ":.* ##" '/.*:.*##/{ printf "%-13s%s\n", $$1, $$2 }' \
+	@awk -F ":.* ##" '/.*:.*##/{ printf "%-13s%s\n", $$1, $$2 }' \
 	$(MAKEFILE_LIST) \
-	| grep -v AWK
+	| grep -v awk
 
 .PHONY: all
 all: $(PACKAGES) ## Build all packages
@@ -60,6 +63,17 @@ htop: htop.go ## Build htop
 tmux: tmux.go libevent.a ## Build tmux
 	$(call install-package,$@)
 
+.PHONY: clamav
+clamav: clamscan  ## Build clamav
+
+clamscan: clamav.go $(CLAMAV_DB_DIR) openssl pcre2-config
+	$(call install-package,clamav)
+	@cp $(FRESHCLAM_CONF).sample $(FRESHCLAM_CONF)
+	@sed -i -e "s/^\(Example\)$$/#\1/" $(FRESHCLAM_CONF)
+
+$(CLAMAV_DB_DIR):
+	@mkdir -p $@
+
 .PHONY: libevent
 libevent: libevent.a ## Build libevent
 
@@ -80,3 +94,9 @@ automake: automake.go autoconf ## Build automake
 
 autoconf: autoconf.go ## Build autoconf
 	$(call install-package,$@)
+
+.PHONY: pcre2
+pcre2: pcre2-config ## Build pcre2
+
+pcre2-config: pcre2.go
+	$(call install-package,pcre2)

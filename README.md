@@ -17,7 +17,9 @@ install the packages.
 - autoconf
 - automake
 - libevent
+- pcre2
 - tmux
+- clamav
 - tree
 - make
 - htop
