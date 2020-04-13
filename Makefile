@@ -17,7 +17,8 @@ PACKAGES       := tree \
                   automake \
                   autoconf \
                   pcre2
-VPATH          := $(DEST_DIR)/bin $(foreach pkg,$(PACKAGES),$(GO_SRC)/macos-$(pkg))
+VPATH          := $(DEST_DIR)/bin
+vpath %.go $(foreach pkg,$(PACKAGES),$(GO_SRC)/macos-$(pkg))
 vpath %.a $(DEST_DIR)/lib
 
 # If default GO does not exist then looks for in PATH variable
